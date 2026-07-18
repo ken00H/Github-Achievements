@@ -166,7 +166,7 @@ def main():
         
         # Make a change
         with open(os.path.join(local_dir, f"file_{i}.txt"), "w") as f:
-            f.write(f"Feature modification {i}")
+            f.write(f"Feature modification {i} at {time.time()}")
         
         run_command(f"git add file_{i}.txt", cwd=local_dir)
         run_command(f'git commit -m "Update file {i}"', cwd=local_dir)
