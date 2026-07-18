@@ -134,26 +134,32 @@ def main():
         make_github_request(close_url, token, data=close_payload, method="PATCH")
         print("[+] Issue closed.")
 
+    # Target counts for achievements (Gold tier defaults)
+    PAIR_EXTRAORDINAIRE_COUNT = 48
+    PULL_SHARK_COUNT = 1024
+
     # --- 2. Pair Extraordinaire Badge ---
-    # Requires a commit containing: Co-authored-by: Name <email>
-    print("\n[+] Triggering 'Pair Extraordinaire' (Co-authored commit)...")
+    # Requires multiple co-authored commits/PRs (Gold: 48)
+    print(f"\n[+] Triggering 'Pair Extraordinaire' ({PAIR_EXTRAORDINAIRE_COUNT} co-authored commits)...")
     readme_path = os.path.join(local_dir, "README.md")
-    with open(readme_path, "a") as f:
-        f.write("\n\nContribution by pair programming partners.")
+    for i in range(1, PAIR_EXTRAORDINAIRE_COUNT + 1):
+        with open(readme_path, "a") as f:
+            f.write(f"\nCollaborative contribution {i}")
+        run_command("git add README.md", cwd=local_dir)
+        commit_msg = f"Add collaborative notes part {i}\n\nCo-authored-by: Octocat <octocat@github.com>"
+        run_command(f'git commit -m "{commit_msg}"', cwd=local_dir)
     
-    run_command("git add README.md", cwd=local_dir)
-    commit_msg = "Add collaborative notes\n\nCo-authored-by: Octocat <octocat@github.com>"
-    run_command(f'git commit -m "{commit_msg}"', cwd=local_dir)
+    print("[+] Pushing all collaborative commits at once...")
     run_command("git push origin main", cwd=local_dir)
-    print("[+] Pushed co-authored commit.")
+    print("[+] Pushed co-authored commits.")
 
     # --- 3. Pull Shark & YOLO Badges ---
     # YOLO: Merge a PR with no reviews
-    # Pull Shark: Merge PRs. We will automate 3 rapid PRs to ensure it registers.
-    print("\n[+] Triggering 'YOLO' and 'Pull Shark'...")
-    for i in range(1, 4):
+    # Pull Shark: Merge PRs (Gold: 1024 merged PRs)
+    print(f"\n[+] Triggering 'YOLO' and 'Pull Shark' ({PULL_SHARK_COUNT} Pull Requests)...")
+    for i in range(1, PULL_SHARK_COUNT + 1):
         branch_name = f"patch-feature-{i}"
-        print(f"\n[*] Creating PR cycle {i}/3...")
+        print(f"\r[*] Processing PR cycle {i}/{PULL_SHARK_COUNT}...", end="", flush=True)
         
         # Create and switch to new branch
         run_command(f"git checkout -b {branch_name}", cwd=local_dir)
@@ -174,24 +180,39 @@ def main():
             "base": "main",
             "body": f"Automated PR #{i}"
         }
-        pr, status = make_github_request(pr_url, token, data=pr_payload, method="POST")
+        
+        # API post with backoff handling
+        pr = None
+        while True:
+            pr, status = make_github_request(pr_url, token, data=pr_payload, method="POST")
+            if status in [403, 429]:
+                print("\n[!] Encountered secondary rate limit. Sleeping for 60 seconds...")
+                time.sleep(60)
+                continue
+            break
         
         if pr:
             pr_number = pr["number"]
-            print(f"[+] Opened PR #{pr_number}.")
             
             # Merge Pull Request
             merge_url = f"https://api.github.com/repos/{username}/{REPO_NAME}/pulls/{pr_number}/merge"
             merge_payload = {"commit_title": f"Merge pull request #{pr_number}"}
-            res, status = make_github_request(merge_url, token, data=merge_payload, method="PUT")
-            if status == 200:
-                print(f"[+] PR #{pr_number} merged successfully.")
             
-        # Clean up local state
+            while True:
+                res, status = make_github_request(merge_url, token, data=merge_payload, method="PUT")
+                if status in [403, 429]:
+                    print("\n[!] Encountered secondary rate limit on merge. Sleeping for 60 seconds...")
+                    time.sleep(60)
+                    continue
+                break
+            
+        # Clean up local branch and update main
         run_command("git checkout main", cwd=local_dir)
         run_command("git pull origin main", cwd=local_dir)
+        # Small delay to keep API requests healthy
+        time.sleep(0.5)
 
-    print("\n=== Automation Sequence Completed ===")
+    print("\n\n=== Automation Sequence Completed ===")
     print("[!] Go check your GitHub profile page. It may take up to 10-15 minutes for the badges to appear.")
 
 if __name__ == "__main__":
