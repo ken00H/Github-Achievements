@@ -9,7 +9,7 @@ import urllib.error
 
 # Configuration
 REPO_NAME = "Github-Achievements"
-DEFAULT_USERNAME = "ken00H"
+DEFAULT_USERNAME = "YOUR_GITHUB_USERNAME"
 
 def check_git_installed():
     try:
@@ -52,7 +52,7 @@ def main():
     print("=== GitHub Achievement Automation Setup ===")
     
     # Attempt to read token from local file
-    token_file_path = "/home/jamal-alshrjabe/Documents/Github Token"
+    token_file_path = "token.txt"
     auto_token = None
     
     username_input = input(f"Enter your secondary GitHub username [{DEFAULT_USERNAME}]: ").strip()
