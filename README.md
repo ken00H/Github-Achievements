@@ -1,187 +1,43 @@
 # GitHub Achievements Unlocker
 
-A simple Python automation tool to programmatically trigger and unlock various digital achievements on your GitHub profile.
+Interactive Python automation for running one selected GitHub achievement workflow at a time. The script targets the account identified by the supplied Personal Access Token (PAT); it does not loop toward higher achievement tiers.
 
-## Achievements Automated
-* **Quickdraw**: Automatically opens and closes an issue within seconds.
-* **Pair Extraordinaire**: Commits and pushes changes referencing a collaborative co-author (`Co-authored-by`).
-* **YOLO**: Opens and merges a Pull Request without code reviews.
-* **Pull Shark**: Merges multiple Pull Requests rapidly to hit tier levels.
+## Supported Achievements
 
----
+- **Quickdraw** — creates and closes one issue immediately.
+- **Pair Extraordinaire** — creates and merges one PR containing a co-authored commit. The PAT account receives co-author credit; the script asks for the other contributor's username.
+- **YOLO** — creates and merges one PR without a review.
+- **Pull Shark** — creates and merges two PRs, GitHub's base badge requirement.
 
-## Getting Started
+## Requirements
 
-### 1. Requirements
-* Python 3 installed
-* Git CLI installed and configured locally (`git config --global user.name "..."`)
+- Python 3
+- Git CLI
+- A GitHub classic PAT with `repo` scope for the account receiving the achievement
+- A public `Github-Achievements` repository, or permission for the script to create it
 
-### 2. Generate a Personal Access Token (PAT)
-To allow the script to interact with your account, generate a **Classic Personal Access Token**:
-1. Go to **Settings** -> **Developer Settings** -> **Personal Access Tokens (classic)**.
-2. Generate a new token with the `repo` scope selected.
-3. Save the token.
+## Usage
 
-### 3. Usage
-You can run the script interactively or place your credentials in a configuration file:
+Run from the project directory:
 
-#### Option A: Interactive Run
-Run the script and follow the prompts:
 ```bash
 python3 unlock_achievements.py
 ```
 
-#### Option B: Automated Config File
-Create a text file named `token.txt` in the same directory as the script. Populate it like so:
-```text
-YOUR_GITHUB_USERNAME = ghp_yourPersonalAccessTokenHere
-```
-Then simply execute the script, and it will load the credentials automatically.
+The script will:
 
----
+1. Ask which achievement to run.
+2. Request the target account's PAT through a hidden prompt.
+3. Resolve the account username and noreply commit email through GitHub's API.
+4. Display the target account and selected achievement for confirmation.
+5. Perform only the selected workflow.
 
-*Disclaimer: This script is for educational purposes and testing API/Git flows. Running automation scripts excessively can violate GitHub's Terms of Service regarding inauthentic interactions. Use responsibly (ideally on a secondary/dummy account first).*
-Collaborative contribution 1
-Collaborative contribution 2
-Collaborative contribution 3
-Collaborative contribution 4
-Collaborative contribution 5
-Collaborative contribution 6
-Collaborative contribution 7
-Collaborative contribution 8
-Collaborative contribution 9
-Collaborative contribution 10
-Collaborative contribution 11
-Collaborative contribution 12
-Collaborative contribution 13
-Collaborative contribution 14
-Collaborative contribution 15
-Collaborative contribution 16
-Collaborative contribution 17
-Collaborative contribution 18
-Collaborative contribution 19
-Collaborative contribution 20
-Collaborative contribution 21
-Collaborative contribution 22
-Collaborative contribution 23
-Collaborative contribution 24
-Collaborative contribution 25
-Collaborative contribution 26
-Collaborative contribution 27
-Collaborative contribution 28
-Collaborative contribution 29
-Collaborative contribution 30
-Collaborative contribution 31
-Collaborative contribution 32
-Collaborative contribution 33
-Collaborative contribution 34
-Collaborative contribution 35
-Collaborative contribution 36
-Collaborative contribution 37
-Collaborative contribution 38
-Collaborative contribution 39
-Collaborative contribution 40
-Collaborative contribution 41
-Collaborative contribution 42
-Collaborative contribution 43
-Collaborative contribution 44
-Collaborative contribution 45
-Collaborative contribution 46
-Collaborative contribution 47
-Collaborative contribution 48
-Collaborative contribution 1
-Collaborative contribution 2
-Collaborative contribution 3
-Collaborative contribution 4
-Collaborative contribution 5
-Collaborative contribution 6
-Collaborative contribution 7
-Collaborative contribution 8
-Collaborative contribution 9
-Collaborative contribution 10
-Collaborative contribution 11
-Collaborative contribution 12
-Collaborative contribution 13
-Collaborative contribution 14
-Collaborative contribution 15
-Collaborative contribution 16
-Collaborative contribution 17
-Collaborative contribution 18
-Collaborative contribution 19
-Collaborative contribution 20
-Collaborative contribution 21
-Collaborative contribution 22
-Collaborative contribution 23
-Collaborative contribution 24
-Collaborative contribution 25
-Collaborative contribution 26
-Collaborative contribution 27
-Collaborative contribution 28
-Collaborative contribution 29
-Collaborative contribution 30
-Collaborative contribution 31
-Collaborative contribution 32
-Collaborative contribution 33
-Collaborative contribution 34
-Collaborative contribution 35
-Collaborative contribution 36
-Collaborative contribution 37
-Collaborative contribution 38
-Collaborative contribution 39
-Collaborative contribution 40
-Collaborative contribution 41
-Collaborative contribution 42
-Collaborative contribution 43
-Collaborative contribution 44
-Collaborative contribution 45
-Collaborative contribution 46
-Collaborative contribution 47
-Collaborative contribution 48
-Collaborative contribution 1
-Collaborative contribution 2
-Collaborative contribution 3
-Collaborative contribution 4
-Collaborative contribution 5
-Collaborative contribution 6
-Collaborative contribution 7
-Collaborative contribution 8
-Collaborative contribution 9
-Collaborative contribution 10
-Collaborative contribution 11
-Collaborative contribution 12
-Collaborative contribution 13
-Collaborative contribution 14
-Collaborative contribution 15
-Collaborative contribution 16
-Collaborative contribution 17
-Collaborative contribution 18
-Collaborative contribution 19
-Collaborative contribution 20
-Collaborative contribution 21
-Collaborative contribution 22
-Collaborative contribution 23
-Collaborative contribution 24
-Collaborative contribution 25
-Collaborative contribution 26
-Collaborative contribution 27
-Collaborative contribution 28
-Collaborative contribution 29
-Collaborative contribution 30
-Collaborative contribution 31
-Collaborative contribution 32
-Collaborative contribution 33
-Collaborative contribution 34
-Collaborative contribution 35
-Collaborative contribution 36
-Collaborative contribution 37
-Collaborative contribution 38
-Collaborative contribution 39
-Collaborative contribution 40
-Collaborative contribution 41
-Collaborative contribution 42
-Collaborative contribution 43
-Collaborative contribution 44
-Collaborative contribution 45
-Collaborative contribution 46
-Collaborative contribution 47
-Collaborative contribution 48
+If `Github-Achievements` already exists on the target account, the script reuses it. Git operations run in a temporary local clone, which is deleted after completion. Achievement badges may take 10–15 minutes to appear on the profile.
+
+## Security
+
+Never paste tokens into source files, command arguments, issues, or chat. Token input is hidden and is not saved by the script. Use minimum required scopes, revoke unused tokens, and prefer a secondary/test account.
+
+## Responsible Use
+
+This project is intended for educational testing of GitHub API and Git workflows. Excessive or inauthentic automation may violate GitHub's Terms of Service.
