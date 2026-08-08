@@ -2,6 +2,7 @@
 import getpass
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -214,6 +215,8 @@ def create_and_merge_pull_request(
 
 
 def main():
+    global REPO_NAME
+
     print("=== GitHub Achievement Automation Setup ===")
     print("\nChoose one achievement:")
     print("1. Quickdraw\n2. Pair Extraordinaire\n3. YOLO\n4. Pull Shark")
@@ -223,6 +226,15 @@ def main():
         print("[-] Invalid achievement selection.", file=sys.stderr)
         sys.exit(1)
     achievement = ACHIEVEMENTS[achievement_choice]
+
+    repo_input = input(f"Repository name [{REPO_NAME}]: ").strip()
+    if repo_input:
+        REPO_NAME = re.sub(r"[^A-Za-z0-9._-]+", "-", repo_input).strip("-")
+        if not REPO_NAME:
+            print("[-] Invalid repository name.", file=sys.stderr)
+            sys.exit(1)
+        if REPO_NAME != repo_input:
+            print(f"[*] Using sanitized repository name '{REPO_NAME}'.")
 
     token = getpass.getpass(
         "Personal access token for the account receiving the achievement "
